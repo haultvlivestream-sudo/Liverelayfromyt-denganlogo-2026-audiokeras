@@ -63,14 +63,15 @@ jobs:
               continue
             fi
 
-            echo "SUMBER DITEMUKAN! Memulai FFmpeg dengan Volume 25x..."
+            echo "SUMBER DITEMUKAN! Memulai FFmpeg dengan Volume 75x + Limiter..."
 
+            # Menggunakan volume=75 dan alimiter agar suara tidak pecah/distorsi parah
             ffmpeg -re -i "$VIDEO_URL" \
               -stream_loop -1 -i logo_video.mp4 \
               -filter_complex "[1:v]crop=ih:ih,colorkey=0x009400:0.1:0.1,scale=85:-1[logo]; [0:v][logo]overlay=W-w-25:25:shortest=1" \
               -c:v libx264 -preset veryfast -b:v 3000k -maxrate 3000k -bufsize 6000k \
               -g 60 -keyint_min 60 -sc_threshold 0 \
-              -af "volume=25" \
+              -af "volume=75,alimiter=limit=0.95" \
               -c:a aac -ar 44100 -b:a 128k \
               -f flv "rtmp://a.rtmp.youtube.com/live2/${{ github.event.inputs.kunci_rtmp }}"
 
